@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "enjoyable_animal_husbanding:item/check_stick"
+  }
+}

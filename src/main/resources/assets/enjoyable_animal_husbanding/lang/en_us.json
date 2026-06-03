@@ -1,0 +1,7 @@
+{
+  "item.enjoyable_animal_husbanding.check_stick": "Check Stick",
+  "item.enjoyable_animal_husbanding.check_stick.check": "%1$s's gender is: %2$s",
+  "item.enjoyable_animal_husbanding.check_stick.gender.male": "Male",
+  "item.enjoyable_animal_husbanding.check_stick.gender.female": "Female",
+  "item.enjoyable_animal_husbanding.check_stick.gender.none": "Unknown"
+}

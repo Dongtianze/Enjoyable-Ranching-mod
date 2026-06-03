@@ -1,0 +1,7 @@
+{
+  "item.enjoyable_animal_husbanding.check_stick": "检查棒",
+  "item.enjoyable_animal_husbanding.check_stick.check": "%1$s 的性别为：%2$s",
+  "item.enjoyable_animal_husbanding.check_stick.gender.male": "雄性",
+  "item.enjoyable_animal_husbanding.check_stick.gender.female": "雌性",
+  "item.enjoyable_animal_husbanding.check_stick.gender.none": "未知"
+}
