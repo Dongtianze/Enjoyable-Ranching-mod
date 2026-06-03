@@ -22,106 +22,71 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Random;
 
 /**
- * 动物性别系统的核心 Mixin，注入到 {@link Animal} 类中。
- * <p>
- * 通过 {@link SynchedEntityData}（实体数据同步系统）管理性别，
- * 确保服务端与客户端数据一致。主要功能：
- * <ol>
- *   <li>为每个 Animal 实体添加 {@link Gender} 属性（雄性 / 雌性）</li>
- *   <li>在实体构造时在服务端随机分配性别，客户端通过数据同步自动获得</li>
- *   <li>拦截原版 {@code canMate()} 方法，阻止同性别动物繁殖</li>
- *   <li>通过 NBT 持久化性别数据，确保重新加载世界后性别不变</li>
- * </ol>
- *
- * @see GenderAccessor
- * @see BreedGoalMixin
+ * 动物性别系统的核心 Mixin，注入到 Animal 类中。
+ * 通过 SynchedEntityData 管理性别，确保服务端与客户端数据一致。
  */
 @Mixin(Animal.class)
 public abstract class AnimalMixin implements GenderAccessor {
 
-    /**
-     * 用于随机生成性别的共享随机数实例。
-     */
+    /** 共享随机数，用于性别随机分配 */
     @Unique
     private static final Random RANDOM = new Random();
 
-    /**
-     * 日志记录器，用于输出繁殖拦截等调试信息。
-     */
+    /** 日志记录器，输出繁殖拦截等调试信息 */
     @Unique
     private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
-     * 性别数据同步参数，向客户端同步性别字符串。
-     * <p>
-     * 使用 {@link EntityDataSerializers#STRING} 类型，
-     * 存储 {@link Gender#name()} 的字符串值。
-     * 通过 {@link SynchedEntityData} 自动在服务端和客户端之间同步。
+     * 性别数据同步键，向客户端同步性别字符串。
+     * 使用 STRING 序列化，存储 Gender.name() 的值。
      */
     @Unique
     private static final EntityDataAccessor<String> GENDER_DATA =
             SynchedEntityData.defineId(Animal.class, EntityDataSerializers.STRING);
 
-    /**
-     * 影子字段，引用原版 {@link net.minecraft.world.entity.Entity} 中的
-     * {@code entityData} 字段，用于注册和读写同步数据。
-     */
+    /** 引用原版 Entity 中的 entityData 字段 */
     @Shadow
     protected SynchedEntityData entityData;
 
     /**
-     * 在 {@link net.minecraft.world.entity.Entity#defineSynchedData()} 末尾注入，
-     * 将性别数据参数注册到实体的数据管理器。
-     * <p>
-     * 此方法在实体构造期间被调用，早于 {@code <init>} 注入点，
-     * 因此后续对 {@link #GENDER_DATA} 的读写操作是安全的。
-     *
-     * @param ci Mixin 回调信息
+     * 注册性别数据参数到实体数据管理器，在实体构造早期执行。
      */
     @Inject(method = "defineSynchedData", at = @At("RETURN"))
     private void enjoyable_animal_husbanding$defineGenderData(CallbackInfo ci) {
+        // 将性别数据键注册到 SynchedEntityData，默认值为 None
         this.entityData.define(GENDER_DATA, Gender.None.name());
     }
 
     /**
-     * 在 {@link Animal} 构造函数执行完毕后注入，仅在服务端随机分配性别。
-     * <p>
-     * 客户端实体的性别通过 {@link SynchedEntityData} 从服务端同步获得，
-     * 因此客户端不做随机赋值，避免每次进入世界时性别变化。
-     *
-     * @param type  实体类型
-     * @param level 所在世界
-     * @param ci    Mixin 回调信息
+     * 实体构造完成后，仅在服务端随机分配性别。
+     * 客户端通过 SynchedEntityData 自动同步，无需本地随机。
      */
     @Inject(method = "<init>", at = @At("RETURN"))
     private void enjoyable_animal_husbanding$initGender(EntityType<? extends Animal> type, Level level, CallbackInfo ci) {
+        // 服务端才做随机分配，客户端性别由数据同步系统获得
         if (!level.isClientSide) {
+            // 50% 概率分配雄性/雌性
             this.setGenderDirect(RANDOM.nextBoolean() ? Gender.Male : Gender.Female);
         }
     }
 
     /**
-     * 通过实体数据管理器获取当前性别。
-     * <p>
-     * 若存储的字符串无法解析为有效的 {@link Gender} 枚举值
-     * （如数据损坏或旧版本存档），则安全回退为 {@link Gender#None}。
-     *
-     * @return 当前动物的性别
+     * 获取当前性别，解析异常时安全回退为 None。
      */
     @Override
     @Unique
     public Gender getGender() {
         try {
+            // 从同步数据中读取并解析性别枚举
             return Gender.valueOf(this.entityData.get(GENDER_DATA));
         } catch (IllegalArgumentException e) {
+            // 数据损坏或旧存档时回退
             return Gender.None;
         }
     }
 
     /**
-     * 通过实体数据管理器设置性别，此操作会自动同步到客户端。
-     *
-     * @param gender 目标性别
+     * 设置性别，此操作通过 SynchedEntityData 自动同步到客户端。
      */
     @Override
     @Unique
@@ -130,10 +95,7 @@ public abstract class AnimalMixin implements GenderAccessor {
     }
 
     /**
-     * 直接写入性别数据，防止 {@link #setGender(Gender)} 被子类覆写时
-     * 导致内部同步机制失效。
-     *
-     * @param gender 目标性别
+     * 直接写入性别数据，防止子类覆写导致内部同步机制失效。
      */
     @Unique
     private void setGenderDirect(Gender gender) {
@@ -141,20 +103,17 @@ public abstract class AnimalMixin implements GenderAccessor {
     }
 
     /**
-     * 在 {@link Animal#canMate(Animal)} 执行前拦截，检查双方性别。
-     * <p>
-     * 若双方性别相同，则取消原版繁殖逻辑并返回 {@code false}，
-     * 从而阻止同性别动物之间繁殖。性别不同时不作干预，交由原版逻辑继续判断。
-     *
-     * @param mate 被检测的繁殖对象
-     * @param cir  可取消的回调，用于设置返回值
+     * 在 canMate() 执行前拦截，阻止同性别动物繁殖。
      */
     @Inject(method = "canMate", at = @At("HEAD"), cancellable = true)
     private void enjoyable_animal_husbanding$checkGenderBeforeMate(Animal mate, CallbackInfoReturnable<Boolean> cir) {
+        // 对方也实现了 GenderAccessor 接口才进行性别比对
         if (mate instanceof GenderAccessor partnerAccessor) {
+            // 获取双方性别
             Gender myGender = this.getGender();
             Gender partnerGender = partnerAccessor.getGender();
 
+            // 性别相同则取消繁殖
             if (myGender == partnerGender) {
                 LOGGER.debug("Breeding blocked: same gender ({}).", myGender);
                 cir.setReturnValue(false);
@@ -163,39 +122,27 @@ public abstract class AnimalMixin implements GenderAccessor {
     }
 
     /**
-     * 在实体保存到 NBT 后注入，将性别写入 CompoundTag。
-     * <p>
-     * 使用 {@code enjoyable_animal_husbanding:gender} 作为键名，
-     * 以命名空间前缀避免与其他模组的数据冲突。
-     *
-     * @param tag 实体的 NBT 数据标签
-     * @param ci  Mixin 回调信息
+     * 保存性别到 NBT，使用命名空间前缀避免与其他模组冲突。
      */
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     private void enjoyable_animal_husbanding$saveGender(CompoundTag tag, CallbackInfo ci) {
+        // 将性别枚举名称写入 NBT
         tag.putString("enjoyable_animal_husbanding:gender", this.getGender().name());
     }
 
     /**
-     * 在实体从 NBT 加载后注入，从 CompoundTag 中读取性别并写入同步数据管理器。
-     * <p>
-     * 由于使用 {@link SynchedEntityData} 存储性别，读取后需通过
-     * {@link #setGenderDirect(Gender)} 写入，确保数据不仅在服务端恢复，
-     * 还能在后续实体追踪建立后自动同步到客户端。
-     * <p>
-     * 若 NBT 中不存在性别数据（如旧版本存档或新生成的实体）或数据格式异常，
-     * 则不做处理，保留构造时分配的随机值。
-     *
-     * @param tag 实体的 NBT 数据标签
-     * @param ci  Mixin 回调信息
+     * 从 NBT 加载性别数据并写入同步数据管理器。
      */
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     private void enjoyable_animal_husbanding$loadGender(CompoundTag tag, CallbackInfo ci) {
+        // 检查 NBT 中是否存在该模组的性别数据
         if (tag.contains("enjoyable_animal_husbanding:gender")) {
             try {
+                // 解析性别枚举并写入同步数据
                 Gender gender = Gender.valueOf(tag.getString("enjoyable_animal_husbanding:gender"));
                 this.setGenderDirect(gender);
             } catch (IllegalArgumentException e) {
+                // 数据异常时重置为 None
                 this.entityData.set(GENDER_DATA, Gender.None.name());
             }
         }

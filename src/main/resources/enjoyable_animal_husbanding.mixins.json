@@ -6,8 +6,7 @@
   "refmap": "enjoyable_animal_husbanding.refmap.json",
   "mixins": [
     "AnimalMixin",
-    "BreedGoalMixin",
-    "CowMixin"
+    "BreedGoalMixin"
   ],
   "client": [
   ],
