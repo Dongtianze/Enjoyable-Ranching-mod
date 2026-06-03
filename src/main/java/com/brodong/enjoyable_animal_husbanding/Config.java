@@ -31,6 +31,9 @@ public class Config {
     /** 一个示例魔法数字，范围 [0, Integer.MAX_VALUE]，默认 42。 */
     private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER.comment("A magic number").defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
 
+    /** 是否在动物头顶显示性别指示器符号（♂ / ♀）。 */
+    private static final ForgeConfigSpec.BooleanValue SHOW_GENDER_INDICATOR = BUILDER.comment("Whether to show gender indicator symbol above animals").define("showGenderIndicator", true);
+
     /** 魔法数字的介绍文本前缀。 */
     public static final ForgeConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER.comment("What you want the introduction message to be for the magic number").define("magicNumberIntroduction", "The magic number is... ");
 
@@ -47,6 +50,8 @@ public class Config {
     public static boolean logDirtBlock;
     /** 运行时缓存的配置值：魔法数字。 */
     public static int magicNumber;
+    /** 运行时缓存的配置值：是否显示性别指示器。 */
+    public static boolean showGenderIndicator;
     /** 运行时缓存的配置值：魔法数字介绍文本。 */
     public static String magicNumberIntroduction;
     /** 运行时缓存的配置值：解析后的物品集合。 */
@@ -71,6 +76,7 @@ public class Config {
     static void onLoad(final ModConfigEvent event) {
         logDirtBlock = LOG_DIRT_BLOCK.get();
         magicNumber = MAGIC_NUMBER.get();
+        showGenderIndicator = SHOW_GENDER_INDICATOR.get();
         magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
 
         // 将字符串列表转换为实际物品的集合

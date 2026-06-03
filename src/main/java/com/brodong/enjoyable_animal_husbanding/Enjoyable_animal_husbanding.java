@@ -1,8 +1,11 @@
 package com.brodong.enjoyable_animal_husbanding;
 
+import com.brodong.enjoyable_animal_husbanding.client.render.GenderRenderLayer;
 import com.brodong.enjoyable_animal_husbanding.item.CheckStickItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -17,6 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -173,6 +177,26 @@ public class Enjoyable_animal_husbanding {
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+        /**
+         * 为所有可渲染的生物实体注册性别指示器渲染层。
+         * <p>
+         * 遍历已注册的实体类型，将 {@link GenderRenderLayer} 添加到
+         * 每个 {@link LivingEntityRenderer} 上，在生物头顶显示 ♂ / ♀ 符号。
+         *
+         * @param event 实体渲染器注册事件
+         */
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SubscribeEvent
+        public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+            for (EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES) {
+                if (entityType == EntityType.PLAYER) continue;
+                LivingEntityRenderer renderer = event.getRenderer((EntityType) entityType);
+                if (renderer != null) {
+                    renderer.addLayer(new GenderRenderLayer(renderer));
+                }
+            }
         }
     }
 }
