@@ -1,4 +1,4 @@
-package com.brodong.enjoyable_animal_husbanding;
+package com.brodong.enjoyable_ranching;
 
 /**
  * 性别枚举，用于标识动物的性别。

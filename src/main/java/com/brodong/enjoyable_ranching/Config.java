@@ -1,4 +1,4 @@
-package com.brodong.enjoyable_animal_husbanding;
+package com.brodong.enjoyable_ranching;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -7,9 +7,9 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 /**
  * 模组配置文件，基于 Forge Config API 管理可配置项。
- * 配置文件路径：config/enjoyable_animal_husbanding-common.toml
+ * 配置文件路径：config/enjoyable_ranching-common.toml
  */
-@Mod.EventBusSubscriber(modid = Enjoyable_animal_husbanding.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = EnjoyableRanching.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

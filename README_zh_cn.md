@@ -1,4 +1,4 @@
-# 牧场之趣 (Enjoyable Animal Husbanding)
+# 牧场之趣 (Enjoyable Ranching)
 
 一款为 Minecraft 1.20.1 Forge 开发的模组，为游戏中的动物添加性别机制、饱食度系统、真实繁殖逻辑与养鸡玩法。
 
@@ -50,15 +50,15 @@
 ## 安装
 
 1. 安装 **Minecraft Forge 1.20.1**（版本 47.x 及以上）。
-2. 从 [Releases](https://github.com/brodong/enjoyable-animal-husbanding/releases) 下载模组 `.jar`。
+2. 从 [Releases](https://github.com/brodong/enjoyable-ranching/releases) 下载模组 `.jar`。
 3. 将 `.jar` 放入 Minecraft 的 `mods/` 文件夹。
 4. 使用 Forge 配置文件启动游戏。
 
 ### 从源码构建
 
 ```bash
-git clone https://github.com/brodong/enjoyable-animal-husbanding.git
-cd enjoyable-animal-husbanding
+git clone https://github.com/brodong/enjoyable-ranching.git
+cd enjoyable-ranching
 ./gradlew build
 ```
 
@@ -89,7 +89,7 @@ cd enjoyable-animal-husbanding
 - 右键收获 1~3 个原版 `minecraft:egg`。
 
 ### 配置文件
-`config/enjoyable_animal_husbanding-common.toml`
+`config/enjoyable_ranching-common.toml`
 | 选项 | 默认值 | 说明 |
 |---|---|---|
 | `showGenderIndicator` | `true` | 是否显示 ♂/♀ 符号 |

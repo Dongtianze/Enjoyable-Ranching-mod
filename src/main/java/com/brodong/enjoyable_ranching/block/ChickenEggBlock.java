@@ -1,4 +1,4 @@
-package com.brodong.enjoyable_animal_husbanding.block;
+package com.brodong.enjoyable_ranching.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

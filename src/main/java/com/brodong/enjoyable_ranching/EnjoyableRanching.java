@@ -1,8 +1,8 @@
-package com.brodong.enjoyable_animal_husbanding;
+package com.brodong.enjoyable_ranching;
 
-import com.brodong.enjoyable_animal_husbanding.block.ChickenEggBlock;
-import com.brodong.enjoyable_animal_husbanding.item.CheckStickItem;
-import com.brodong.enjoyable_animal_husbanding.network.GenderSyncPacket;
+import com.brodong.enjoyable_ranching.block.ChickenEggBlock;
+import com.brodong.enjoyable_ranching.item.CheckStickItem;
+import com.brodong.enjoyable_ranching.network.GenderSyncPacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -33,10 +33,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
-@Mod(Enjoyable_animal_husbanding.MODID)
-public class Enjoyable_animal_husbanding {
+@Mod(EnjoyableRanching.MODID)
+public class EnjoyableRanching {
 
-    public static final String MODID = "enjoyable_animal_husbanding";
+    public static final String MODID = "enjoyable_ranching";
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -75,7 +75,7 @@ public class Enjoyable_animal_husbanding {
     public static final RegistryObject<Item> CHICKEN_EGG_ITEM = ITEMS.register("chicken_egg",
             () -> new BlockItem(CHICKEN_EGG.get(), new Item.Properties()));
 
-    public Enjoyable_animal_husbanding() {
+    public EnjoyableRanching() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // 注册网络包：id=0，将性别同步包注册到网络通道
@@ -104,7 +104,7 @@ public class Enjoyable_animal_husbanding {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("Enjoyable Animal Husbanding mod loaded.");
+        LOGGER.info("Enjoyable Ranching mod loaded.");
     }
 
     /** 将模组物品添加到创造模式标签页 */

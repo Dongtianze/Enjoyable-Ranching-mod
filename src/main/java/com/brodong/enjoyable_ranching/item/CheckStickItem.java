@@ -1,8 +1,8 @@
-package com.brodong.enjoyable_animal_husbanding.item;
+package com.brodong.enjoyable_ranching.item;
 
-import com.brodong.enjoyable_animal_husbanding.Gender;
-import com.brodong.enjoyable_animal_husbanding.GenderHelper;
-import com.brodong.enjoyable_animal_husbanding.SatietyHelper;
+import com.brodong.enjoyable_ranching.Gender;
+import com.brodong.enjoyable_ranching.GenderHelper;
+import com.brodong.enjoyable_ranching.SatietyHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,13 +33,13 @@ public class CheckStickItem extends Item {
             // 动物：显示性别 + 饱食度
             Gender gender = GenderHelper.getGender(animal);
             Component genderText = Component.translatable(
-                    "item.enjoyable_animal_husbanding.check_stick.gender." + gender.name().toLowerCase());
+                    "item.enjoyable_ranching.check_stick.gender." + gender.name().toLowerCase());
 
             int satiety = SatietyHelper.getSatiety(animal);
             Component satietyText = Component.literal(satiety + "/" + SatietyHelper.MAX_SATIETY);
 
             player.displayClientMessage(
-                    Component.translatable("item.enjoyable_animal_husbanding.check_stick.animal",
+                    Component.translatable("item.enjoyable_ranching.check_stick.animal",
                             target.getDisplayName(), genderText, satietyText),
                     false);
             return InteractionResult.SUCCESS;
@@ -51,7 +51,7 @@ public class CheckStickItem extends Item {
             Component foodText = Component.literal(foodLevel + "/20");
 
             player.displayClientMessage(
-                    Component.translatable("item.enjoyable_animal_husbanding.check_stick.player",
+                    Component.translatable("item.enjoyable_ranching.check_stick.player",
                             target.getDisplayName(), foodText),
                     false);
             return InteractionResult.SUCCESS;
