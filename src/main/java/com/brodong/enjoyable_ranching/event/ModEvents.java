@@ -1,10 +1,10 @@
-package com.brodong.enjoyable_animal_husbanding.event;
+package com.brodong.enjoyable_ranching.event;
 
-import com.brodong.enjoyable_animal_husbanding.Gender;
-import com.brodong.enjoyable_animal_husbanding.GenderHelper;
-import com.brodong.enjoyable_animal_husbanding.Enjoyable_animal_husbanding;
-import com.brodong.enjoyable_animal_husbanding.SatietyHelper;
-import com.brodong.enjoyable_animal_husbanding.network.GenderSyncPacket;
+import com.brodong.enjoyable_ranching.Gender;
+import com.brodong.enjoyable_ranching.GenderHelper;
+import com.brodong.enjoyable_ranching.EnjoyableRanching;
+import com.brodong.enjoyable_ranching.SatietyHelper;
+import com.brodong.enjoyable_ranching.network.GenderSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -44,7 +44,7 @@ import java.util.Random;
  *   <li>鸡下蛋替代原版机制</li>
  * </ol>
  */
-@Mod.EventBusSubscriber(modid = Enjoyable_animal_husbanding.MODID)
+@Mod.EventBusSubscriber(modid = EnjoyableRanching.MODID)
 public class ModEvents {
 
     private static final Random RANDOM = new Random();
@@ -71,15 +71,15 @@ public class ModEvents {
         if (GenderHelper.getGender(animal) == Gender.None) {
             GenderHelper.setGender(animal, RANDOM.nextBoolean() ? Gender.Male : Gender.Female);
         }
-        if (!animal.getPersistentData().contains("enjoyable_animal_husbanding:satiety")) {
+        if (!animal.getPersistentData().contains("enjoyable_ranching:satiety")) {
             SatietyHelper.fillSatiety(animal);
         }
-        animal.getPersistentData().putInt("enjoyable_animal_husbanding:last_damage_tick", animal.tickCount);
-        animal.getPersistentData().putInt("enjoyable_animal_husbanding:last_heal_tick", animal.tickCount);
+        animal.getPersistentData().putInt("enjoyable_ranching:last_damage_tick", animal.tickCount);
+        animal.getPersistentData().putInt("enjoyable_ranching:last_heal_tick", animal.tickCount);
 
         if (animal instanceof Chicken chicken
-                && !chicken.getPersistentData().contains("enjoyable_animal_husbanding:egg_timer")) {
-            chicken.getPersistentData().putInt("enjoyable_animal_husbanding:egg_timer",
+                && !chicken.getPersistentData().contains("enjoyable_ranching:egg_timer")) {
+            chicken.getPersistentData().putInt("enjoyable_ranching:egg_timer",
                     chicken.getRandom().nextInt(1200) + 1200);
         }
     }
@@ -99,7 +99,7 @@ public class ModEvents {
         if (!(target instanceof Animal)) return;
         ServerPlayer player = (ServerPlayer) event.getEntity();
         Gender gender = GenderHelper.getGender(target);
-        Enjoyable_animal_husbanding.CHANNEL.send(
+        EnjoyableRanching.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> player),
                 new GenderSyncPacket(target.getId(), gender));
     }
@@ -187,13 +187,13 @@ public class ModEvents {
 
         // ===== 羊吃草检测：羊毛从剃光状态重新长出 → 饱食度回满 =====
         if (animal instanceof Sheep sheep) {
-            boolean wasSheared = data.getBoolean("enjoyable_animal_husbanding:was_sheared");
+            boolean wasSheared = data.getBoolean("enjoyable_ranching:was_sheared");
             boolean isSheared = sheep.isSheared();
             if (wasSheared && !isSheared) {
                 SatietyHelper.fillSatiety(animal);
                 satiety = SatietyHelper.MAX_SATIETY;
             }
-            data.putBoolean("enjoyable_animal_husbanding:was_sheared", isSheared);
+            data.putBoolean("enjoyable_ranching:was_sheared", isSheared);
         }
 
         // ===== 饱食度自然衰减 =====
@@ -204,19 +204,19 @@ public class ModEvents {
 
         // ===== 饥饿扣血 =====
         if (satiety == 0) {
-            int lastDamage = data.getInt("enjoyable_animal_husbanding:last_damage_tick");
+            int lastDamage = data.getInt("enjoyable_ranching:last_damage_tick");
             if (tickCount - lastDamage >= STARVE_DAMAGE_INTERVAL) {
                 animal.hurt(animal.damageSources().starve(), 1.0F);
-                data.putInt("enjoyable_animal_husbanding:last_damage_tick", tickCount);
+                data.putInt("enjoyable_ranching:last_damage_tick", tickCount);
             }
         }
 
         // ===== 饱食回血 =====
         if (satiety > 15 && animal.getHealth() < animal.getMaxHealth()) {
-            int lastHeal = data.getInt("enjoyable_animal_husbanding:last_heal_tick");
+            int lastHeal = data.getInt("enjoyable_ranching:last_heal_tick");
             if (tickCount - lastHeal >= SATIETY_HEAL_INTERVAL) {
                 animal.heal(1.0F);
-                data.putInt("enjoyable_animal_husbanding:last_heal_tick", tickCount);
+                data.putInt("enjoyable_ranching:last_heal_tick", tickCount);
             }
         }
     }
@@ -229,10 +229,10 @@ public class ModEvents {
         }
 
         CompoundTag data = chicken.getPersistentData();
-        int timer = data.getInt("enjoyable_animal_husbanding:egg_timer") - 1;
+        int timer = data.getInt("enjoyable_ranching:egg_timer") - 1;
 
         if (timer <= 0) {
-            data.putInt("enjoyable_animal_husbanding:egg_timer",
+            data.putInt("enjoyable_ranching:egg_timer",
                     chicken.getRandom().nextInt(6000) + 6000);
 
             Gender gender = GenderHelper.getGender(chicken);
@@ -245,7 +245,7 @@ public class ModEvents {
                     if (chicken.level().getBlockState(pos.below()).isSolid()
                             && chicken.level().getBlockState(pos).canBeReplaced()) {
                         chicken.level().setBlock(pos,
-                                Enjoyable_animal_husbanding.CHICKEN_EGG.get().defaultBlockState(), 3);
+                                EnjoyableRanching.CHICKEN_EGG.get().defaultBlockState(), 3);
                     }
                 } else {
                     int count = chicken.getRandom().nextInt(2) + 1;
@@ -253,7 +253,7 @@ public class ModEvents {
                 }
             }
         } else {
-            data.putInt("enjoyable_animal_husbanding:egg_timer", timer);
+            data.putInt("enjoyable_ranching:egg_timer", timer);
         }
     }
 }

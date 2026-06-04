@@ -1,9 +1,9 @@
-package com.brodong.enjoyable_animal_husbanding.client.event;
+package com.brodong.enjoyable_ranching.client.event;
 
-import com.brodong.enjoyable_animal_husbanding.Config;
-import com.brodong.enjoyable_animal_husbanding.Enjoyable_animal_husbanding;
-import com.brodong.enjoyable_animal_husbanding.Gender;
-import com.brodong.enjoyable_animal_husbanding.GenderHelper;
+import com.brodong.enjoyable_ranching.Config;
+import com.brodong.enjoyable_ranching.EnjoyableRanching;
+import com.brodong.enjoyable_ranching.Gender;
+import com.brodong.enjoyable_ranching.GenderHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -23,7 +23,7 @@ import org.joml.Matrix4f;
  * 与命名牌完全相同的位置上下文（实体世界坐标，无模型变换），直接复用
  * 原版命名牌的摄像机朝向 + 缩放 + 字体绘制管线，确保符号始终正对玩家。
  */
-@Mod.EventBusSubscriber(modid = Enjoyable_animal_husbanding.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = EnjoyableRanching.MODID, value = Dist.CLIENT)
 public class ClientRenderEvents {
 
     @SubscribeEvent

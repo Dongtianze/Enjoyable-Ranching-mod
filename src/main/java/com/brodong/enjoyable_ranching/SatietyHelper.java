@@ -1,4 +1,4 @@
-package com.brodong.enjoyable_animal_husbanding;
+package com.brodong.enjoyable_ranching;
 
 import net.minecraft.world.entity.Entity;
 
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 public class SatietyHelper {
 
     /** PersistentData 中的键名，以命名空间前缀避免冲突 */
-    private static final String KEY = "enjoyable_animal_husbanding:satiety";
+    private static final String KEY = "enjoyable_ranching:satiety";
 
     /** 饱食度最大值 */
     public static final int MAX_SATIETY = 20;

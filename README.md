@@ -1,4 +1,4 @@
-# Enjoyable Animal Husbanding
+# Enjoyable Ranching
 
 A Minecraft 1.20.1 Forge mod that adds gender mechanics, a satiety system, realistic breeding, and enhanced chicken husbandry.
 
@@ -50,15 +50,15 @@ by **brodong**
 ## Installation
 
 1. Install **Minecraft Forge 1.20.1** (version 47.x or higher).
-2. Download the mod `.jar` from [Releases](https://github.com/brodong/enjoyable-animal-husbanding/releases).
+2. Download the mod `.jar` from [Releases](https://github.com/brodong/enjoyable-ranching/releases).
 3. Place the `.jar` into your Minecraft `mods/` folder.
 4. Launch with the Forge profile.
 
 ### Building from Source
 
 ```bash
-git clone https://github.com/brodong/enjoyable-animal-husbanding.git
-cd enjoyable-animal-husbanding
+git clone https://github.com/brodong/enjoyable-ranching.git
+cd enjoyable-ranching
 ./gradlew build
 ```
 
@@ -89,7 +89,7 @@ The compiled jar will be in `build/libs/`.
 - Right-click an egg block to collect 1–3 vanilla `minecraft:egg` items.
 
 ### Configuration
-Config file: `config/enjoyable_animal_husbanding-common.toml`
+Config file: `config/enjoyable_ranching-common.toml`
 | Option | Default | Description |
 |---|---|---|
 | `showGenderIndicator` | `true` | Toggle the ♂/♀ symbol above animals |

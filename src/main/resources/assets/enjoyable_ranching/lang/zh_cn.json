@@ -1,0 +1,9 @@
+{
+  "item.enjoyable_ranching.check_stick": "检查棒",
+  "item.enjoyable_ranching.check_stick.animal": "%1$s | 性别：%2$s | 饱食度：%3$s",
+  "item.enjoyable_ranching.check_stick.player": "%1$s | 饥饿值：%2$s",
+  "item.enjoyable_ranching.check_stick.gender.male": "雄性",
+  "item.enjoyable_ranching.check_stick.gender.female": "雌性",
+  "item.enjoyable_ranching.check_stick.gender.none": "未知",
+  "block.enjoyable_ranching.chicken_egg": "鸡蛋"
+}

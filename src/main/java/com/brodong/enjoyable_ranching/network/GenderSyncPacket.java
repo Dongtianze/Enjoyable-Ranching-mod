@@ -1,7 +1,7 @@
-package com.brodong.enjoyable_animal_husbanding.network;
+package com.brodong.enjoyable_ranching.network;
 
-import com.brodong.enjoyable_animal_husbanding.Gender;
-import com.brodong.enjoyable_animal_husbanding.GenderHelper;
+import com.brodong.enjoyable_ranching.Gender;
+import com.brodong.enjoyable_ranching.GenderHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 

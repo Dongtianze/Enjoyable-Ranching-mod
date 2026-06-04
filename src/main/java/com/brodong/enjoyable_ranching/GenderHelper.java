@@ -1,4 +1,4 @@
-package com.brodong.enjoyable_animal_husbanding;
+package com.brodong.enjoyable_ranching;
 
 import net.minecraft.world.entity.Entity;
 
@@ -16,7 +16,7 @@ public class GenderHelper {
     private static final Map<UUID, Gender> CLIENT_CACHE = new ConcurrentHashMap<>();
 
     /** PersistentData 中的 key */
-    private static final String KEY = "enjoyable_animal_husbanding:gender";
+    private static final String KEY = "enjoyable_ranching:gender";
 
     /**
      * 设置实体的性别（仅在服务端调用有效）
