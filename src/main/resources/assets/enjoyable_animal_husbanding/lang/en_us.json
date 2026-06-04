@@ -1,7 +1,9 @@
 {
   "item.enjoyable_animal_husbanding.check_stick": "Check Stick",
-  "item.enjoyable_animal_husbanding.check_stick.check": "%1$s's gender is: %2$s",
+  "item.enjoyable_animal_husbanding.check_stick.animal": "%1$s | Gender: %2$s | Satiety: %3$s",
+  "item.enjoyable_animal_husbanding.check_stick.player": "%1$s | Food: %2$s",
   "item.enjoyable_animal_husbanding.check_stick.gender.male": "Male",
   "item.enjoyable_animal_husbanding.check_stick.gender.female": "Female",
-  "item.enjoyable_animal_husbanding.check_stick.gender.none": "Unknown"
+  "item.enjoyable_animal_husbanding.check_stick.gender.none": "Unknown",
+  "block.enjoyable_animal_husbanding.chicken_egg": "Chicken Egg"
 }

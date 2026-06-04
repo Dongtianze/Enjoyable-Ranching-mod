@@ -1,20 +1,23 @@
 package com.brodong.enjoyable_animal_husbanding;
 
-import com.brodong.enjoyable_animal_husbanding.client.render.GenderRenderLayer;
+import com.brodong.enjoyable_animal_husbanding.block.ChickenEggBlock;
 import com.brodong.enjoyable_animal_husbanding.item.CheckStickItem;
 import com.brodong.enjoyable_animal_husbanding.network.GenderSyncPacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -50,9 +53,27 @@ public class Enjoyable_animal_husbanding {
     /** 物品的延迟注册器 */
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    /** 检查棒：右键动物在聊天栏查看性别，合成配方为木棍 + 钻石 */
+    /** 检查棒：右键动物/玩家在聊天栏查看性别与饱食度 */
     public static final RegistryObject<Item> CHECK_STICK = ITEMS.register("check_stick",
             () -> new CheckStickItem(new Item.Properties().stacksTo(1)));
+
+    /** 方块的延迟注册器 */
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+
+    /** 鸡蛋方块：类似海龟蛋孵化，玩家右键收获原版鸡蛋 */
+    public static final RegistryObject<Block> CHICKEN_EGG = BLOCKS.register("chicken_egg",
+            () -> new ChickenEggBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .randomTicks()
+                    .strength(0.5F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+                    .noCollission()
+                    .pushReaction(PushReaction.DESTROY)));
+
+    /** 鸡蛋方块的物品形式 */
+    public static final RegistryObject<Item> CHICKEN_EGG_ITEM = ITEMS.register("chicken_egg",
+            () -> new BlockItem(CHICKEN_EGG.get(), new Item.Properties()));
 
     public Enjoyable_animal_husbanding() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -69,6 +90,9 @@ public class Enjoyable_animal_husbanding {
         // 注册物品到事件总线
         ITEMS.register(modEventBus);
 
+        // 注册方块到事件总线
+        BLOCKS.register(modEventBus);
+
         // 注册自身到 Forge 事件总线，监听服务端事件
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -83,10 +107,13 @@ public class Enjoyable_animal_husbanding {
         LOGGER.info("Enjoyable Animal Husbanding mod loaded.");
     }
 
-    /** 将检查棒添加到工具与实用物品标签页 */
+    /** 将模组物品添加到创造模式标签页 */
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(CHECK_STICK);
+        }
+        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+            event.accept(CHICKEN_EGG_ITEM);
         }
     }
 
@@ -103,22 +130,6 @@ public class Enjoyable_animal_husbanding {
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        }
-
-        /**
-         * 为所有生物实体注册性别指示渲染层，在头顶显示 ♂ / ♀ 符号
-         */
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        @SubscribeEvent
-        public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
-            for (EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES) {
-                // 跳过玩家，只处理生物实体
-                if (entityType == EntityType.PLAYER) continue;
-                LivingEntityRenderer renderer = event.getRenderer((EntityType) entityType);
-                if (renderer != null) {
-                    renderer.addLayer(new GenderRenderLayer(renderer));
-                }
-            }
         }
     }
 }
