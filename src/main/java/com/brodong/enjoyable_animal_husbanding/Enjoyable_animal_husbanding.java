@@ -2,9 +2,11 @@ package com.brodong.enjoyable_animal_husbanding;
 
 import com.brodong.enjoyable_animal_husbanding.client.render.GenderRenderLayer;
 import com.brodong.enjoyable_animal_husbanding.item.CheckStickItem;
+import com.brodong.enjoyable_animal_husbanding.network.GenderSyncPacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -21,6 +23,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -33,6 +37,16 @@ public class Enjoyable_animal_husbanding {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    /** 网络通信协议版本 */
+    private static final String PROTOCOL_VERSION = "1";
+
+    /** 模组网络通道，用于性别数据的客户端同步 */
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(MODID, "main"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals);
+
     /** 物品的延迟注册器 */
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
@@ -42,6 +56,12 @@ public class Enjoyable_animal_husbanding {
 
     public Enjoyable_animal_husbanding() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // 注册网络包：id=0，将性别同步包注册到网络通道
+        CHANNEL.registerMessage(0, GenderSyncPacket.class,
+                GenderSyncPacket::encode,
+                GenderSyncPacket::decode,
+                GenderSyncPacket::handle);
 
         // 注册通用初始化事件
         modEventBus.addListener(this::commonSetup);
