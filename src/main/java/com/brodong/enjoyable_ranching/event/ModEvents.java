@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
@@ -57,6 +58,9 @@ public class ModEvents {
     private static final int SATIETY_DECAY_PROBABILITY = 1200;
     /** 高饱食度下进入 inLove 的概率：1/64 每 tick */
     private static final int INLOVE_CHANCE = 64;
+
+    /** 寻找交配对象的搜索半径（与 BreedGoal 默认范围一致） */
+    private static final double MATE_SEARCH_RANGE = 8.0D;
 
     // ==================== 实体生命周期 ====================
 
@@ -178,9 +182,10 @@ public class ModEvents {
         int satiety = SatietyHelper.getSatiety(animal);
         int tickCount = animal.tickCount;
 
-        // ===== 饱食度 >15 时随机进入 inLove（保留原版 canFallInLove 冷却） =====
+        // ===== 饱食度 >15 时随机进入 inLove =====
+        // 仅在附近存在异性同类的前提下才进入发情状态，避免同性别浪费 inLove
         if (animal.getAge() == 0 && animal.canFallInLove() && satiety > 15) {
-            if (RANDOM.nextInt(INLOVE_CHANCE) == 0) {
+            if (RANDOM.nextInt(INLOVE_CHANCE) == 0 && hasCompatibleMate(animal)) {
                 animal.setInLove(null);
             }
         }
@@ -255,5 +260,24 @@ public class ModEvents {
         } else {
             data.putInt("enjoyable_ranching:egg_timer", timer);
         }
+    }
+
+    /**
+     * 检查附近是否存在异性同类，避免同性别动物浪费 inLove 状态。
+     * 搜索范围与 BreedGoal 默认匹配范围一致。
+     */
+    private static boolean hasCompatibleMate(Animal animal) {
+        Gender myGender = GenderHelper.getGender(animal);
+        // 没有性别的实体不做限制（兼容其他模组）
+        if (myGender == Gender.None) return true;
+        AABB searchBox = animal.getBoundingBox().inflate(MATE_SEARCH_RANGE, 4.0D, MATE_SEARCH_RANGE);
+        for (Animal other : animal.level().getEntitiesOfClass(Animal.class, searchBox,
+                a -> a != animal && a.getClass() == animal.getClass())) {
+            Gender otherGender = GenderHelper.getGender(other);
+            if (otherGender != Gender.None && otherGender != myGender) {
+                return true;
+            }
+        }
+        return false;
     }
 }
