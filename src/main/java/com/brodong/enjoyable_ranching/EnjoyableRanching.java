@@ -1,6 +1,8 @@
 package com.brodong.enjoyable_ranching;
 
 import com.brodong.enjoyable_ranching.block.ChickenEggBlock;
+import com.brodong.enjoyable_ranching.block.FeedingTroughBlock;
+import com.brodong.enjoyable_ranching.block.FeedingTroughBlockEntity;
 import com.brodong.enjoyable_ranching.item.CheckStickItem;
 import com.brodong.enjoyable_ranching.network.GenderSyncPacket;
 import com.mojang.logging.LogUtils;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -75,6 +78,51 @@ public class EnjoyableRanching {
     public static final RegistryObject<Item> CHICKEN_EGG_ITEM = ITEMS.register("chicken_egg",
             () -> new BlockItem(CHICKEN_EGG.get(), new Item.Properties()));
 
+    /** 饲槽方块：玩家右键填入饲料，动物优先从中取食 */
+    public static final RegistryObject<Block> FEEDING_TROUGH = BLOCKS.register("feeding_trough",
+            () -> new FeedingTroughBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)      // 地图显示颜色：木质
+                    .strength(0.6F)               // 硬度 0.6（与工作台相同）
+                    .sound(SoundType.WOOD)         // 音效：木头
+                    .noOcclusion()));              // 非完整方块，允许相邻方块渲染
+
+    /** 饲槽方块的物品形式 */
+    public static final RegistryObject<Item> FEEDING_TROUGH_ITEM = ITEMS.register("feeding_trough",
+            () -> new BlockItem(FEEDING_TROUGH.get(), new Item.Properties()));
+
+    /** 方块实体的延迟注册器 */
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+
+    /**
+     * 饲槽方块实体类型注册。
+     *
+     * <h4>循环引用解决方案：</h4>
+     * BlockEntityType.Builder 需要 FeedingTroughBlockEntity 的二参构造器 (pos, state)，
+     * 但 BlockEntity 的 super() 又需要 BlockEntityType 实例。
+     * 解决策略：
+     * <ol>
+     *   <li>在此 supplier 内先构建 BlockEntityType（此时仅存储工厂引用，不创建实例）</li>
+     *   <li>立即调用 {@code FeedingTroughBlockEntity.initType(type)} 将类型注入静态字段</li>
+     *   <li>游戏内创建 BE 时，FeedingTroughBlockEntity(pos, state) 的 super(TYPE, ...) 从静态字段获取类型</li>
+     * </ol>
+     */
+    public static final RegistryObject<BlockEntityType<FeedingTroughBlockEntity>> FEEDING_TROUGH_ENTITY =
+            BLOCK_ENTITIES.register("feeding_trough",
+                    () -> {
+                        // 1. 构建 BlockEntityType：
+                        //    - 工厂方法 FeedingTroughBlockEntity::new 匹配 (BlockPos, BlockState) → BE
+                        //    - FEEDING_TROUGH.get() 绑定此实体类型到饲槽方块
+                        BlockEntityType<FeedingTroughBlockEntity> type =
+                                BlockEntityType.Builder.of(FeedingTroughBlockEntity::new, FEEDING_TROUGH.get())
+                                        .build(null);
+                        // 2. 注入类型引用到 FeedingTroughBlockEntity 静态字段
+                        //    此后所有 BE 实例的 super(TYPE, pos, state) 调用可正常工作
+                        FeedingTroughBlockEntity.initType(type);
+                        // 3. 返回构建完成的类型供注册系统使用
+                        return type;
+                    });
+
     public EnjoyableRanching() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -92,6 +140,9 @@ public class EnjoyableRanching {
 
         // 注册方块到事件总线
         BLOCKS.register(modEventBus);
+
+        // 注册方块实体到事件总线
+        BLOCK_ENTITIES.register(modEventBus);
 
         // 注册自身到 Forge 事件总线，监听服务端事件
         MinecraftForge.EVENT_BUS.register(this);
@@ -114,6 +165,9 @@ public class EnjoyableRanching {
         }
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
             event.accept(CHICKEN_EGG_ITEM);
+        }
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(FEEDING_TROUGH_ITEM);
         }
     }
 

@@ -5,5 +5,6 @@
   "item.enjoyable_ranching.check_stick.gender.male": "雄性",
   "item.enjoyable_ranching.check_stick.gender.female": "雌性",
   "item.enjoyable_ranching.check_stick.gender.none": "未知",
-  "block.enjoyable_ranching.chicken_egg": "鸡蛋"
+  "block.enjoyable_ranching.chicken_egg": "鸡蛋",
+  "block.enjoyable_ranching.feeding_trough": "饲槽"
 }
