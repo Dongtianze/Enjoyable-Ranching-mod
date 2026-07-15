@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "enjoyable_ranching:block/chicken_egg"
+  },
+  "elements": [
+    {
+      "from": [4, 0, 5],
+      "to": [9, 4, 10],
+      "faces": {
+        "down":  {"uv": [1, 1, 0, 0], "texture": "#particle"},
+        "up":    {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "north": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "south": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "west":  {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "east":  {"uv": [0, 0, 1, 1], "texture": "#particle"}
+      }
+    },
+    {
+      "from": [6, 0, 6],
+      "to": [11, 3, 11],
+      "faces": {
+        "down":  {"uv": [1, 1, 0, 0], "texture": "#particle"},
+        "up":    {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "north": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "south": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "west":  {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "east":  {"uv": [0, 0, 1, 1], "texture": "#particle"}
+      }
+    },
+    {
+      "from": [7, 0, 4],
+      "to": [12, 3, 9],
+      "faces": {
+        "down":  {"uv": [1, 1, 0, 0], "texture": "#particle"},
+        "up":    {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "north": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "south": {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "west":  {"uv": [0, 0, 1, 1], "texture": "#particle"},
+        "east":  {"uv": [0, 0, 1, 1], "texture": "#particle"}
+      }
+    }
+  ]
+}

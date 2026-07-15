@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "enjoyable_ranching:block/feeding_trough_top_5",
+    "bottom": "enjoyable_ranching:block/feeding_trough_bottom",
+    "side": "enjoyable_ranching:block/feeding_trough_side",
+    "particle": "enjoyable_ranching:block/feeding_trough_side"
+  }
+}
